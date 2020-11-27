@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Chatアプリ</title>
+  
+  <style>
+    /* <!-- この中にcssをかけます --> */  
+  .container {
+    width: 60%;
+    margin: 30px auto;
+  }
+  input#username {
+    width: 150px;
+  }
+  textarea#text {
+    width: 150px;
+  }
+  .chat-area {
+    height: 80vh;
+    background: rgb(117, 231, 231);
+    overflow: scroll;
+  }
+  .message-area-text {
+    width: 80%;
+  }
+  .message-area-button {
+    width: 20%;
+  }
+  .message-area-text textarea {
+    width: 10%;
+    height: 100%;
+    resize: none;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+  }
+  button#send {
+    width: 20%;
+    height: 100%;
+    background: rgb(186, 235, 138);
+    color:white;
+    font-size: 2.0rem;
+    font-weight: bold;
+    border: 0;
+    font-size: 20px;
+  }
+  button#send:hover,
+  button#send:hover{
+  color: white;
+  background: rgb(80, 224, 80);
+  }
+  
+ 
+div#output {
+     color:teal;
+     overflow: scroll;
+     background: rgb(152, 240, 225);
+     font-weight: bold;
+   } 
+
+  .send {
+    outline: none;
+    height: 40px;
+    text-align: center;
+    width: 130px;
+    border-radius: 40px;
+    background: #fff;
+    border: 2px solid green;
+    color: green;
+    letter-spacing: 1px;
+    text-shadow: 0;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- ブラウザの画面に見える内容 -->
+  <div>
+    <div id="container">
+      <div id="chat-area"></div>
+      <div><input type="text" id= "username" placeholder="なまえ"></div>
+        <div id="textarea">
+         <div><textarea rows="5" id="text" placeholder="メッセージ"></textarea>
+        </div>
+       <div id="messagearea-button">
+         <button id="send">送信</button>
+       </div>
+      <div id="output">トーク履歴</div>
+    </div>
+  </div>
+
+     <!-- / ブラウザの画面に見える内容 --> 
+
+  <!-- JQuery -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <!--** 以下Firebase **-->
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <!-- ここにfirebaseのscriptを貼り付ける -->
+  <script src="https://www.gstatic.com/firebasejs/7.14.2/firebase.js"></script>
+
+  <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyCsU26mB333oOYyctwopnwIGeiuQYzJlxg",
+    authDomain: "dev18-chat01-b9ca6.firebaseapp.com",
+    databaseURL: "https://dev18-chat01-b9ca6.firebaseio.com",
+    projectId: "dev18-chat01-b9ca6",
+    storageBucket: "dev18-chat01-b9ca6.appspot.com",
+    messagingSenderId: "15287179577",
+    appId: "1:15287179577:web:66c9ad0084958899df70e8"    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    //firebaseのデーターベース（保存させる場所）を使いますよと言うjsのコードを貼り付ける
+    // xxxxxスクリプトを貼り付ける
+    var newPostRef = firebase.database().ref();
+
+
+    // ここから下にjqueryの処理を書いて練習します
+    // 送信ボタンをクリックされたら次の処理をする
+
+    $(function() {
+     $( "#send" ).click(function()  {
+      $( "#send" ).addClass( "onclic",
+    250, validate);
+     });
+     function validate() {
+       setTimeout(function() {
+         $( "#send" ).removeClass(
+           "onclick" );
+           $( "#send" ).addClass(
+             "validate", 450, callback );          
+       }, 2250 );
+     }
+    function callback() {
+      setTimeout(function() {
+        $( "#send" ). removeClass(
+          "validate" ); 
+      }, 1250 );
+     }
+    });
+
+      $("#send").on("click", function () {
+        // データを登録で送る
+        newPostRef.push({
+          //名前
+          username: $("#username").val(),
+          //テキストエリア
+          text: $("#text").val()
+        });
+        // 文字を空にする
+        $("#text").val(""); //空にする
+        $("#username").val(""); //空にする
+      });
+
+      // 受信処理
+      newPostRef.on("child_added", function (data) {
+        var v = data.val();
+        var k = data.key;
+        var str = '<dl><dt>'+v.username+'</dt><dd>'+v.text+'</dd></dt>';
+        $("#output").append(str);
+      });
+      //ここに保存されたデータが全て入ってくる
+      // function (data)のdataにfirebaseのデータが入ってくる
+  </script>
+</body>
+
+</html>
